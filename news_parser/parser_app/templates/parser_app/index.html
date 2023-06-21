@@ -5,5 +5,54 @@
 {% endblock %}
 
 {% block content %}
+<div class="container" style="width: 70%">
+    <form id="parse-form" method="POST" action="{% url 'parsing' %}">
+        {% csrf_token %}
+        <button id="parse-button" class="btn btn-info" type="submit">Find news</button>
+    </form>
+    <br><br>
 
+    <div id="info-message" style="display: none;">
+        <div class="text-center">
+            <div class="spinner-grow text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h1 class="display-6">We look for information</h1>
+            <br><br>
+        </div>
+    </div>
+
+    <div class="d-flex align-content-between justify-content-start flex-wrap">
+        {% for article in articles %}
+        <div class="p-2 shadow-lg p-3 mb-5 bg-body-tertiary rounded" style="width: 32%">
+            <img src="{{ article.photo }}" width="100%" style="margin-bottom: 4%;">
+            <p class="fw-semibold">{{ article.name }}</p>
+            <br>
+            <p class="font-monospace text-secondary opacity-75" style="position: absolute; bottom: 0;">{{ article.published }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('parse-form').addEventListener('submit', function() {
+        document.getElementById('parse-button').disabled = true;
+        document.getElementById('info-message').style.display = 'block';
+    });
+
+
+</script>
 {% endblock %}

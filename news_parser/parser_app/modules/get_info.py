@@ -1,6 +1,6 @@
 import time
 
-from load_django import *
+from .load_django import *
 from parser_app.models import *
 from selenium import webdriver
 from selenium.common import NoSuchElementException, TimeoutException
@@ -12,6 +12,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 class News:
     def __init__(self):
         chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--headless")
         chrome_options.add_argument("--start-maximized")
         self.driver = webdriver.Chrome(options=chrome_options)
 
@@ -115,8 +116,3 @@ class News:
 
         self.driver.quit()
 
-
-N = News()
-
-N.get_links()
-N.get_data()

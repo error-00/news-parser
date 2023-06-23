@@ -7,8 +7,12 @@ from .modules.get_info import *
 # Create your views here.
 def parsing(request):
     if request.method == 'POST':
+        keyword = request.POST.get('keyword', '')
         N = News()
-        N.get_links()
+        if keyword:
+            N.get_links(keyword)
+        else:
+            N.get_links()
         N.get_data()
     return redirect('home')
 

@@ -8,7 +8,12 @@
 <div class="container" style="width: 70%">
     <form id="parse-form" method="POST" action="{% url 'parsing' %}">
         {% csrf_token %}
-        <button id="parse-button" class="btn btn-info" type="submit">Find news</button>
+        <div class="input-group mb-3">
+            <button class="btn btn-info" type="submit" id="parse-button">Find news</button>
+            <input type="text" class="form-control" name="keyword" placeholder="Enter keyword"
+                   aria-label="Example text with button addon"
+                   aria-describedby="button-addon1">
+        </div>
     </form>
     <br><br>
 
@@ -52,6 +57,8 @@
         document.getElementById('parse-button').disabled = true;
         document.getElementById('info-message').style.display = 'block';
     });
+
+
 
 
 </script>

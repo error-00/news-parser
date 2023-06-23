@@ -14,7 +14,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 class News:
     def __init__(self):
         chrome_options = webdriver.ChromeOptions()
-        # chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--headless")
         chrome_options.add_argument("--start-maximized")
         self.driver = webdriver.Chrome(options=chrome_options)
 

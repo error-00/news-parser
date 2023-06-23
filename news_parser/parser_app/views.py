@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from .models import *
 # from .forms import *
@@ -19,9 +20,13 @@ def parsing(request):
 
 def index(request):
     articles = Articles.objects.all().order_by('-id')
+    paginator = Paginator(articles, 15)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context = {
         'title': 'Main',
         'articles': articles,
+        'page_obj': page_obj,
     }
     return render(request, 'parser_app/index.html', context)
 

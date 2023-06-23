@@ -40,7 +40,7 @@
     </div>
 
     <div class="d-flex align-content-between justify-content-start flex-wrap">
-        {% for article in articles %}
+        {% for article in page_obj %}
         <div class="p-2 shadow-lg p-3 mb-5 bg-body-tertiary rounded" style="width: 32%">
             <img src="{{ article.photo }}" width="100%" style="margin-bottom: 4%;">
             <p class="fw-semibold">{{ article.name }}</p>
@@ -50,6 +50,49 @@
         {% endfor %}
     </div>
 
+{% if page_obj.paginator.num_pages > 1 %}
+    <nav aria-label="...">
+        <ul class="pagination pagination-lg justify-content-center">
+            {% if page_obj.number > 3 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">1</a>
+                </li>
+                {% if page_obj.number > 4 %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+            {% endif %}
+
+            {% for page_num in page_obj.paginator.page_range %}
+                {% if page_num > page_obj.number|add:'-3' and page_num < page_obj.number|add:'3' %}
+                    {% if page_obj.number == page_num %}
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">{{ page_num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+                {% if page_obj.number < page_obj.paginator.num_pages|add:'-4' %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+
+
 </div>
 
 <script>
@@ -57,6 +100,9 @@
         document.getElementById('parse-button').disabled = true;
         document.getElementById('info-message').style.display = 'block';
     });
+
+
+
 
 
 

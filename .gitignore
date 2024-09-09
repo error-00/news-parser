@@ -1,2 +1,4 @@
 .idea/
 venv/
+get_info_old.py
+db.sqlite3

@@ -1,4 +1,3 @@
-from email.policy import default
 import requests
 
 from bs4 import BeautifulSoup

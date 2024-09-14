@@ -15,7 +15,7 @@ def parsing(request):
         else:
             N.get_links()
         N.get_data()
-    return redirect('home')
+    return redirect('parser_app:index')
 
 
 def index(request):
@@ -30,9 +30,3 @@ def index(request):
     }
     return render(request, 'parser_app/index.html', context)
 
-
-def account(request):
-    context = {
-        'title': 'Account',
-    }
-    return render(request, 'parser_app/account.html', context)

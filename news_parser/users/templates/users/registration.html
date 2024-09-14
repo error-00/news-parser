@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block content %}
+  <div class="container" style="width: 30%; margin-top: 50px;">
+    <form action="{% url 'users:registration' %}" method="POST">
+      {% csrf_token %}
+      {% if form.non_field_erros %}
+        <div class="aler aler-danger" role="alert">{{ form.non_field_errors }}</div>
+      {% endif %}
+      <img class="mb-4" src="{% static 'images/main.ico' %}" alt="" width="80" height="80" style="display: block; margin: 0 auto;" />
+
+      <h1 class="h3 mb-3 fw-normal">Please register</h1>
+
+      <div class="form-floating">
+        <input type="first_name" class="form-control" name="first_name" id="id_first_name" placeholder="First name" required />
+        <label for="id_first_name">First name</label>
+      </div>
+      {% if form.first_name.errors %}
+        <div class="alert alert-danger alert-dismissible fade show">{{ form.first_name.errors }}</div>
+      {% endif %}
+
+      <div class="form-floating">
+        <input type="last_name" class="form-control" name="last_name" id="id_last_name" placeholder="Last name" required />
+        <label for="id_last_name">Last name</label>
+      </div>
+      {% if form.last_name.errors %}
+        <div class="alert alert-danger alert-dismissible fade show">{{ form.last_name.errors }}</div>
+      {% endif %}
+
+      <div class="form-floating">
+        <input type="username" class="form-control" name="username" id="id_username" placeholder="Username" required />
+        <label for="id_username">Username</label>
+      </div>
+      {% if form.username.errors %}
+        <div class="alert alert-danger alert-dismissible fade show">{{ form.username.errors }}</div>
+      {% endif %}
+
+      <div class="form-floating">
+        <input type="email" class="form-control" name="email" id="id_email" placeholder="name@example.com" value="{% if form.email.value %}{{ form.email.value }}{% endif %}" required />
+        <label for="id_email">Email address</label>
+      </div>
+      {% if form.email.errors %}
+        <div class="alert alert-danger alert-dismissible fade show">{{ form.email.errors }}</div>
+      {% endif %}
+
+      <div class="form-floating">
+        <input type="password" class="form-control" name="password1" id="id_password1" placeholder="Password" required />
+        <label for="id_password1">Password</label>
+      </div>
+      {% if form.password1.errors %}
+        <div class="alert alert-danger alert-dismissible fade show">{{ form.password1.errors }}</div>
+      {% endif %}
+
+      <div class="form-floating">
+        <input type="password" class="form-control" name="password2" id="id_password2" placeholder="Password again" required />
+        <label for="id_password1">Password again</label>
+      </div>
+      {% if form.password2.errors %}
+        <div class="alert alert-danger alert-dismissible fade show">{{ form.password2.errors }}</div>
+      {% endif %}
+
+      {% comment %} <div class="checkbox mb-3">
+        <label><input type="checkbox" value="remember-me" />Remember me</label>
+      </div> {% endcomment %}
+      <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+    </form>
+    <br />
+    <a href="{% url 'users:login' %}" style="font-size: 16px; text-align: center; display: block; text-decoration: none;">Sign In</a>
+  </div>
+{% endblock %}

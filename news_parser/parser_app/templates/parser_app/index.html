@@ -1,4 +1,4 @@
-{% extends 'parser_app/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}
 {{ title }}
@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="container" style="width: 70%">
-    <form id="parse-form" method="POST" action="{% url 'parsing' %}">
+    <form id="parse-form" method="POST" action="{% url 'parser_app:parsing' %}">
         {% csrf_token %}
         <div class="input-group mb-3">
             <button class="btn btn-info" type="submit" id="parse-button">Find news</button>

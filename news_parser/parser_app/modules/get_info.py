@@ -62,23 +62,38 @@ class News:
             published = soup.find("time")
             published = published.text.strip() if published else None
 
-            description_lst = soup.find("div", class_="c-article__body").find_all("p")
-            description = "\n".join(
-                p.text.strip()
-                for p in description_lst
-                if "Читайте також:" not in p.text
-                and "Підписуйтесь на наші канали" not in p.text
+            # Find the main article body content
+            description_div = soup.find("div", class_="c-article__body")
+
+            # Remove unwanted elements, like <aside> and ads or video blocks
+            if description_div:
+                for unwanted in description_div.find_all(["aside", "div", "ul"], class_=["c-aside", "c-card--embed", "c-figure", "u-hide--smd"]):
+                    unwanted.decompose()  # Remove unwanted elements completely
+
+            # Extract the text while preserving the structure with line breaks
+            article_text = ''
+            if description_div:
+                paragraphs = description_div.find_all(["p", "strong", "b", "i"])
+                for paragraph in paragraphs:
+                    # Add paragraph text with newline
+                    article_text += paragraph.get_text(strip=True) + "\n"
+
+            # Clean up unwanted text fragments or links
+            clean_content = "\n".join(
+                line for line in article_text.split("\n")
+                if "Читайте також:" not in line
+                and "Підписуйтесь на наші канали" not in line
             )
 
             print(f"Name: {name}")
             print(f"Published: {published}")
-            print(f"Description: {description}")
+            print(f"Description: {clean_content}")
 
             defaults = {
                 "name": name,
                 "photo": photo,
                 "published": published,
-                "description": description,
+                "description": clean_content,
             }
 
             # Update link status and save article

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ article.name }} - Article Details
+{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <!-- Article Header -->
+        <div class="article-header text-center mb-5">
+          <h1 class="display-4 fw-bold text-dark">{{ article.name }}</h1>
+          <p class="text-muted mb-1">
+            <strong>Published:</strong> {{ article.published }}
+          </p>
+          <p>
+            <a href="{{ article.url }}" class="btn btn-lg btn-primary mt-3 px-5" target="_blank">Read Full Article</a>
+          </p>
+        </div>
+
+        <!-- Article Image -->
+        {% if article.photo %}
+          <div class="article-image text-center mb-4">
+            <img src="{{ article.photo }}" alt="{{ article.name }}" class="img-fluid rounded shadow-lg" style="max-height: 450px; object-fit: cover;" />
+          </div>
+        {% endif %}
+
+        <!-- Article Description -->
+        <div class="article-description mt-4 mb-5">
+          <p class="lead" style="font-size: 1.2rem; line-height: 1.8;">
+            {{ article.description }}
+          </p>
+        </div>
+
+        <!-- Share Buttons (Optional) -->
+        <div class="article-share text-center mt-5">
+          <p class="fs-5">Share this article:</p>
+          <a href="https://twitter.com/intent/tweet?url={{ article.url }}" target="_blank" class="btn btn-outline-primary me-2">
+            <i class="fab fa-twitter"></i> Twitter
+          </a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ article.url }}" target="_blank" class="btn btn-outline-primary me-2">
+            <i class="fab fa-facebook"></i> Facebook
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

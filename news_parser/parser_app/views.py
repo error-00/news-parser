@@ -44,4 +44,15 @@ def save_article(request, article_id):
         # Save article
         request.user.saved_articles.add(article)
         return JsonResponse({'saved': True})
+
+
+def article_detail(request, article_id):
+    article = get_object_or_404(Articles, id=article_id)
+
+    context = {
+        'title': article.name,
+        'article': article
+    }
+
+    return render(request, 'parser_app/article_detail.html', context)
     

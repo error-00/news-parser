@@ -1,111 +1,142 @@
 {% extends 'base.html' %}
 
 {% block title %}
-{{ title }}
+  {{ title }}
 {% endblock %}
 
 {% block content %}
-<div class="container" style="width: 70%">
+  <div class="container" style="width: 70%; margin-top: 50px;">
     <form id="parse-form" method="POST" action="{% url 'parser_app:parsing' %}">
-        {% csrf_token %}
-        <div class="input-group mb-3">
-            <button class="btn btn-info" type="submit" id="parse-button">Find news</button>
-            <input type="text" class="form-control" name="keyword" placeholder="Enter keyword"
-                   aria-label="Example text with button addon"
-                   aria-describedby="button-addon1">
-        </div>
+      {% csrf_token %}
+      <div class="input-group mb-4">
+        <input type="text" class="form-control" name="keyword" placeholder="Enter keyword" aria-label="Search keyword" aria-describedby="button-addon1" style="border-radius: 20px 0 0 20px;" />
+        <button class="btn btn-info" type="submit" id="parse-button" style="border-radius: 0 20px 20px 0; padding-left: 30px; padding-right: 30px;">Search</button>
+      </div>
     </form>
-    <br><br>
 
-    <div id="info-message" style="display: none;">
-        <div class="text-center">
-            <div class="spinner-grow text-info" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-info" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-info" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-info" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-info" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <h1 class="display-6">We look for information</h1>
-            <br><br>
+    <div id="info-message" class="text-center mt-5" style="display: none;">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-grow text-info me-2" role="status">
+          <span class="visually-hidden">Loading...</span>
         </div>
+        <div class="spinner-grow text-info me-2" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-info me-2" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <h1 class="display-6 mt-4">Searching for news...</h1>
     </div>
 
-    <div class="d-flex align-content-between justify-content-start flex-wrap">
-        {% for article in page_obj %}
-        <div class="p-2 shadow-lg p-3 mb-5 bg-body-tertiary rounded" style="width: 32%">
-            <img src="{{ article.photo }}" width="100%" style="margin-bottom: 4%;">
-            <p class="fw-semibold">{{ article.name }}</p>
-            <br>
-            <p class="font-monospace text-secondary opacity-75" style="position: absolute; bottom: 0;">{{ article.published }}</p>
-        </div>
-        {% endfor %}
-    </div>
+    <div class="row">
+      {% for article in page_obj %}
+        <div class="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
+          <div class="card shadow-lg" style="width: 100%; border-radius: 15px; overflow: hidden; position: relative;">
+            <img src="{{ article.photo }}" class="card-img-top" alt="Article Image" style="height: 200px; object-fit: cover;" />
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title fw-semibold">{{ article.name }}</h5>
+              <p class="card-text text-muted small">{{ article.published }}</p>
 
-{% if page_obj.paginator.num_pages > 1 %}
-    <nav aria-label="...">
-        <ul class="pagination pagination-lg justify-content-center">
-            {% if page_obj.number > 3 %}
-                <li class="page-item">
-                    <a class="page-link" href="?page=1">1</a>
-                </li>
-                {% if page_obj.number > 4 %}
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                {% endif %}
-            {% endif %}
-
-            {% for page_num in page_obj.paginator.page_range %}
-                {% if page_num > page_obj.number|add:'-3' and page_num < page_obj.number|add:'3' %}
-                    {% if page_obj.number == page_num %}
-                        <li class="page-item active" aria-current="page">
-                            <span class="page-link">{{ page_num }}</span>
-                        </li>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                {% if user.is_authenticated %}
+                  <form class="save-article-form" data-article-id="{{ article.id }}" method="POST">
+                    {% csrf_token %}
+                    {% if article in user.saved_articles.all %}
+                      <button type="button" class="btn save-article-btn" style="background: none; border: none;">
+                        <i class="fas fa-heart text-danger" style="font-size: 1.5rem;"></i>
+                      </button>
                     {% else %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
-                        </li>
+                      <button type="button" class="btn save-article-btn" style="background: none; border: none;">
+                        <i class="far fa-heart text-secondary" style="font-size: 1.5rem;"></i>
+                      </button>
                     {% endif %}
+                  </form>
                 {% endif %}
-            {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
 
-            {% if page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
-                {% if page_obj.number < page_obj.paginator.num_pages|add:'-4' %}
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                {% endif %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
-                </li>
+    {% if page_obj.paginator.num_pages > 1 %}
+      <nav aria-label="Pagination" class="mt-5">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.number > 3 %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1">1</a>
+            </li>
+            {% if page_obj.number > 4 %}
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
             {% endif %}
+          {% endif %}
+
+          {% for page_num in page_obj.paginator.page_range %}
+            {% if page_num > page_obj.number|add:'-3' and page_num < page_obj.number|add:'3' %}
+              {% if page_obj.number == page_num %}
+                <li class="page-item active" aria-current="page">
+                  <span class="page-link">{{ page_num }}</span>
+                </li>
+              {% else %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                </li>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+            {% if page_obj.number < page_obj.paginator.num_pages|add:'-4' %}
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+            {% endif %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+            </li>
+          {% endif %}
         </ul>
-    </nav>
-{% endif %}
+      </nav>
+    {% endif %}
+  </div>
 
-
-</div>
-
-<script>
-    document.getElementById('parse-form').addEventListener('submit', function() {
-        document.getElementById('parse-button').disabled = true;
-        document.getElementById('info-message').style.display = 'block';
+  <script>
+    document.getElementById('parse-form').addEventListener('submit', function () {
+      document.getElementById('parse-button').disabled = true;
+      document.getElementById('info-message').style.display = 'block';
     });
 
+    // AJAX for saving the article without refreshing the page
+    document.querySelectorAll('.save-article-btn').forEach((button) => {
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        const form = this.closest('.save-article-form');
+        const articleId = form.getAttribute('data-article-id');
+        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
 
-
-
-
-
-
-</script>
+        fetch(`{% url 'parser_app:save_article' 0 %}`.replace(0, articleId), {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ article_id: articleId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.saved) {
+            this.querySelector('i').classList.remove('far');
+            this.querySelector('i').classList.add('fas', 'text-danger');
+          } else {
+            this.querySelector('i').classList.remove('fas', 'text-danger');
+            this.querySelector('i').classList.add('far');
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      });
+    });
+  </script>
 {% endblock %}

@@ -1,39 +1,42 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{title}}{% endblock title %}
+{% block title %}{{title}}{% endblock %}
 
 {% block content %}
 <div class="container" style="width: 30%; margin-top: 50px;">
-
-    <form action="{% url 'users:login' %}" method="POST">
-        {% csrf_token %}
-        {% if form.non_field_erros %}
-        <div class="aler aler-danger" role="alert">{{ form.non_field_errors }}</div>
-        {% endif %}
-        <img class="mb-4" src="{% static 'images/main.ico' %}" alt="" width="80" height="80" style="display: block; margin: 0 auto;">
-
-        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-    
-        <div class="form-floating">
-          <input type="email" class="form-control" name="email" id="id_email" placeholder="name@example.com" value="{% if form.email.value %}{{ form.email.value }}{% endif %}" required />
-          <label for="id_email">Email address</label>
+    <div class="card shadow-lg p-4">
+        <div class="text-center">
+            <img class="mb-4" src="{% static 'images/main.ico' %}" alt="Logo" width="80" height="80">
+            <h1 class="h4 mb-3 fw-bold text-primary">Please Sign In</h1>
         </div>
-        <div class="form-floating">
-          <input type="password" class="form-control" name="password" id="id_password" placeholder="Password" required />
-          <label for="id_password">Password</label>
+
+        <form action="{% url 'users:login' %}" method="POST">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" name="email" id="id_email" placeholder="name@example.com"
+                    value="{% if form.email.value %}{{ form.email.value }}{% endif %}" required>
+                <label for="id_email">Email address</label>
+            </div>
+            <div class="form-floating mb-4">
+                <input type="password" class="form-control" name="password" id="id_password" placeholder="Password" required>
+                <label for="id_password">Password</label>
+            </div>
+
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        </form>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'users:registration' %}" class="text-decoration-none" style="font-size: 16px;">Don't have an account? Register</a>
         </div>
-    
-        {% comment %} <div class="checkbox mb-3">
-          <label>
-            <input type="checkbox" value="remember-me"> Remember me
-          </label>
-        </div> {% endcomment %}
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-    </form>
-    <br>
-    <a href="{% url 'users:registration' %}" style="font-size: 16px; text-align: center; display: block; text-decoration: none;">Register</a>
-
-
+    </div>
 </div>
-{% endblock content %}
+
+{% endblock %}

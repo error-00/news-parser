@@ -6,13 +6,37 @@
 
 {% block content %}
   <div class="container" style="width: 70%; margin-top: 50px;">
-    <form id="parse-form" method="POST" action="{% url 'parser_app:parsing' %}">
+    {% comment %} Display Search Results {% endcomment %}
+    <form id="parse-form" method="POST" action="{% url 'parser_app:parsing' %}" class="mb-4">
       {% csrf_token %}
-      <div class="input-group mb-4">
-        <input type="text" class="form-control" name="keyword" placeholder="Enter keyword" aria-label="Search keyword" aria-describedby="button-addon1" style="border-radius: 20px 0 0 20px;" />
-        <button class="btn btn-info" type="submit" id="parse-button" style="border-radius: 0 20px 20px 0; padding-left: 30px; padding-right: 30px;">Search</button>
+      <div class="input-group">
+        <input type="text" class="form-control" name="keyword" placeholder="Enter keyword for parsing..." aria-label="Search keyword" required />
+        <button class="btn btn-info" type="submit" id="parse-button">Search</button>
       </div>
     </form>
+
+    {% comment %} Filter Form {% endcomment %}
+    <form method="GET" action="{% url 'parser_app:index' %}" class="row g-3">
+      {% csrf_token %}
+      <div class="col-md-4">
+        <input type="text" class="form-control" name="keyword" placeholder="Keyword" value="{{ keyword }}" />
+      </div>
+      <div class="col-md-3">
+        <select name="sort" class="form-select" aria-label="Sort">
+          <option value="newer" {% if sort_order == "newer" %}selected{% endif %}>Newer First</option>
+          <option value="older" {% if sort_order == "older" %}selected{% endif %}>Older First</option>
+        </select>
+      </div>
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-info w-100">Filter</button>
+      </div>
+      <div class="col-md-1">
+        <button type="button" class="btn btn-danger w-100" id="clear-filters" title="Clear all filters">
+            <i class="fas fa-eraser"></i>
+        </button>
+      </div>
+    </form>
+    <br>
 
     <div id="info-message" class="text-center mt-5" style="display: none;">
       <div class="d-flex justify-content-center">
@@ -55,7 +79,7 @@
                 {% endif %}
               </div>
             </div>
-        </a>
+          </a>
         </div>
       {% endfor %}
     </div>
@@ -82,7 +106,7 @@
                 </li>
               {% else %}
                 <li class="page-item">
-                  <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                  <a class="page-link" href="?page={{ page_num }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if sort_order %}&sort={{ sort_order }}{% endif %}">{{ page_num }}</a>
                 </li>
               {% endif %}
             {% endif %}
@@ -95,7 +119,7 @@
               </li>
             {% endif %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if sort_order %}&sort={{ sort_order }}{% endif %}">{{ page_obj.paginator.num_pages }}</a>
             </li>
           {% endif %}
         </ul>
@@ -105,17 +129,17 @@
 
   <script>
     document.getElementById('parse-form').addEventListener('submit', function () {
-      document.getElementById('parse-button').disabled = true;
-      document.getElementById('info-message').style.display = 'block';
-    });
+      document.getElementById('parse-button').disabled = true
+      document.getElementById('info-message').style.display = 'block'
+    })
 
     // AJAX for saving the article without refreshing the page
     document.querySelectorAll('.save-article-btn').forEach((button) => {
       button.addEventListener('click', function (event) {
-        event.preventDefault();
-        const form = this.closest('.save-article-form');
-        const articleId = form.getAttribute('data-article-id');
-        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+        event.preventDefault()
+        const form = this.closest('.save-article-form')
+        const articleId = form.getAttribute('data-article-id')
+        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value
 
         fetch(`{% url 'parser_app:save_article' 0 %}`.replace(0, articleId), {
           method: 'POST',
@@ -125,18 +149,31 @@
           },
           body: JSON.stringify({ article_id: articleId })
         })
-        .then(response => response.json())
-        .then(data => {
-          if (data.saved) {
-            this.querySelector('i').classList.remove('far');
-            this.querySelector('i').classList.add('fas', 'text-danger');
-          } else {
-            this.querySelector('i').classList.remove('fas', 'text-danger');
-            this.querySelector('i').classList.add('far');
-          }
-        })
-        .catch(error => console.error('Error:', error));
-      });
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.saved) {
+              this.querySelector('i').classList.remove('far')
+              this.querySelector('i').classList.add('fas', 'text-danger')
+            } else {
+              this.querySelector('i').classList.remove('fas', 'text-danger')
+              this.querySelector('i').classList.add('far')
+            }
+          })
+          .catch((error) => console.error('Error:', error))
+      })
+    })
+
+    document.getElementById('clear-filters').addEventListener('click', function () {
+      // Clear the keyword input and reset the sort select
+      document.querySelector('input[name="keyword"]').value = '';
+      document.querySelector('select[name="sort"]').selectedIndex = 0;
+
+      // Submit the form to reset the filters
+      document.querySelector('form').submit(); // This submits the form to the GET action
+    });
+
+    document.querySelector('form').addEventListener('submit', function () {
+      document.getElementById('info-message').style.display = 'block'; // Show loading indicator
     });
   </script>
 {% endblock %}

@@ -15,7 +15,7 @@ class News:
         # Fetch the page content
         url = self.base_url
         if keyword:
-            url += f"search?keyword={keyword}"
+            url += f"search?query={keyword}"
         else:
             url += "news"
 
@@ -67,23 +67,33 @@ class News:
 
             # Remove unwanted elements, like <aside> and ads or video blocks
             if description_div:
-                for unwanted in description_div.find_all(["aside", "div", "ul"], class_=["c-aside", "c-card--embed", "c-figure", "u-hide--smd"]):
+                for unwanted in description_div.find_all(
+                    ["aside", "div", "ul"],
+                    class_=["c-aside", "c-card--embed", "c-figure", "u-hide--smd"],
+                ):
                     unwanted.decompose()  # Remove unwanted elements completely
 
             # Extract the text while preserving the structure with line breaks
-            article_text = ''
+            article_text = ""
             if description_div:
-                paragraphs = description_div.find_all(["p", "strong", "b", "i"])
+                paragraphs = description_div.find_all("p")
                 for paragraph in paragraphs:
+                    text = paragraph.get_text(separator=" ").strip()
+                    # If paragraph text is not empty and doesn't end with space, add a space
+                    if article_text and not article_text.endswith(" "):
+                        article_text += " "
                     # Add paragraph text with newline
-                    article_text += paragraph.get_text(strip=True) + "\n"
+                    article_text += text + "\n\n"
 
             # Clean up unwanted text fragments or links
             clean_content = "\n".join(
-                line for line in article_text.split("\n")
+                line
+                for line in article_text.split("\n")
                 if "Читайте також:" not in line
                 and "Підписуйтесь на наші канали" not in line
-            )
+            ).strip()  # Remove leading/trailing spaces
+
+            clean_content = clean_content.replace("\n", "<br>")
 
             print(f"Name: {name}")
             print(f"Published: {published}")
@@ -93,11 +103,11 @@ class News:
                 "name": name,
                 "photo": photo,
                 "published": published,
-                "description": clean_content,
+                "description": clean_content,  # Save the text with \n
             }
 
             # Update link status and save article
-            l.status = 'Done'
+            l.status = "Done"
             l.save()
 
             obj, created = Articles.objects.get_or_create(url=url, defaults=defaults)

@@ -5,45 +5,89 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container mt-5">
+  <div class="container my-5 py-5">
     <div class="row">
       <div class="col-lg-10 mx-auto">
         <!-- Article Header -->
         <div class="article-header text-center mb-5">
-          <h1 class="display-4 fw-bold text-dark">{{ article.name }}</h1>
-          <p class="text-muted mb-1">
+          <h1 class="display-4 fw-bold text-primary">{{ article.name }}</h1>
+          <p class="text-muted mb-2">
             <strong>Published:</strong> {{ article.published }}
           </p>
           <p>
-            <a href="{{ article.url }}" class="btn btn-lg btn-primary mt-3 px-5" target="_blank">Read Full Article</a>
+            <a href="{{ article.url }}" class="btn btn-lg btn-gradient mt-3 px-5 shadow-sm" target="_blank">Read Full Article</a>
           </p>
         </div>
 
         <!-- Article Image -->
         {% if article.photo %}
           <div class="article-image text-center mb-4">
-            <img src="{{ article.photo }}" alt="{{ article.name }}" class="img-fluid rounded shadow-lg" style="max-height: 450px; object-fit: cover;" />
+            <img src="{{ article.photo }}" alt="{{ article.name }}" class="img-fluid rounded shadow-lg border border-light" style="max-height: 700px; object-fit: cover; transition: transform .2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"/>
           </div>
         {% endif %}
 
         <!-- Article Description -->
-        <div class="article-description mt-4 mb-5">
-          <p class="lead" style="font-size: 1.2rem; line-height: 1.8;">
-            {{ article.description }}
+        <div class="article-description mt-4 mb-5 bg-light p-4 rounded shadow-sm">
+          <p class="lead" style="font-size: 1.3rem; line-height: 1.8; font-family: 'Merriweather', serif;">
+            {{ article.description|safe }}
           </p>
         </div>
 
-        <!-- Share Buttons (Optional) -->
+        <!-- Share Buttons -->
         <div class="article-share text-center mt-5">
-          <p class="fs-5">Share this article:</p>
-          <a href="https://twitter.com/intent/tweet?url={{ article.url }}" target="_blank" class="btn btn-outline-primary me-2">
-            <i class="fab fa-twitter"></i> Twitter
-          </a>
-          <a href="https://www.facebook.com/sharer/sharer.php?u={{ article.url }}" target="_blank" class="btn btn-outline-primary me-2">
-            <i class="fab fa-facebook"></i> Facebook
-          </a>
+          <p class="fs-5 text-secondary">Share this article:</p>
+          <div class="d-inline-block">
+            <a href="https://twitter.com/intent/tweet?url={{ article.url }}" target="_blank" class="btn btn-twitter btn-floating me-2 shadow-sm">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ article.url }}" target="_blank" class="btn btn-facebook btn-floating me-2 shadow-sm">
+              <i class="fab fa-facebook"></i>
+            </a>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <style>
+    .btn-gradient {
+      background: linear-gradient(135deg, #6f42c1, #007bff);
+      color: white;
+      border: none;
+    }
+
+    .btn-gradient:hover {
+      background: linear-gradient(135deg, #007bff, #6f42c1);
+      box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-twitter {
+      background-color: #1da1f2;
+      color: white;
+    }
+
+    .btn-facebook {
+      background-color: #3b5998;
+      color: white;
+    }
+
+    .btn-floating {
+      width: 50px;
+      height: 50px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    .btn-floating:hover {
+      filter: brightness(1.1);
+    }
+
+    .article-description {
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+  </style>
 {% endblock %}

@@ -1,4 +1,4 @@
 .idea/
 venv/
 get_info_old.py
-db.sqlite3
+news_parser/db.sqlite3
